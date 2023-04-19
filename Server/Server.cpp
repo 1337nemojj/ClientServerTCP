@@ -33,7 +33,15 @@ int main(int argc, char* argv[]){
     
     bind(server_socket_fd, (sockaddr*)&server_addr, sizeof(server_addr));
 
-    listen(server_socket_fd, SOMAXCONN);
+    if (listen(server_socket_fd, SOMAXCONN) < 0)
+    {
+        std::cerr << "[-]Error"<<std::endl;
+    }
+    else
+    {
+        system("clear");
+        std::cerr << "[+]Server started" << std::endl;
+    }
     
     while(1)
     {
@@ -44,24 +52,32 @@ int main(int argc, char* argv[]){
 
         if (client_socket_fd < 0)
         {
-            std::cout << "error incoming connection" <<std::endl;
+            std::cout << "[-]Error incoming connection" <<std::endl;
             close(client_socket_fd);
             continue;
+        }
+        else
+        {
+            std::cerr << "[+]Connected: "<<(sockaddr*)&client_addr <<std::endl;
         }
 
         char buffer[1024];
         int bytes_recieved = recv(client_socket_fd, buffer, sizeof(buffer), 0);
         if (bytes_recieved <=0)
         {
-            std::cerr << "error data from client" <<std::endl;
+            std::cerr << "[-]Error data from client" <<std::endl;
             close(client_socket_fd);
             continue;
         }
+        else
+        {
+            std::ofstream outfile("recieved.txt");
+            outfile.write(buffer, bytes_recieved);
+            outfile.close();
+            std::cerr << "[+]Catch data" << std::endl;
+        }
         //data
 
-        std::ofstream outfile("recieved.txt");
-        outfile.write(buffer, bytes_recieved);
-        outfile.close();
 
         close(client_socket_fd);
     }

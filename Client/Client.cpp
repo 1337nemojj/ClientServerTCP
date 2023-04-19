@@ -29,19 +29,20 @@ int main(int argc, char* argv[]){
     int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (socket_fd < 0)
     {
-        std::cerr << "error socket" << std::endl;
+        std::cerr << "[+]Error socket" << std::endl;
         return 1;
     }
+    
     if (inet_pton(AF_INET, argv[1], &server_addr.sin_addr) <= 0)
     {
-        std::cerr << "error wrong adrress" <<std::endl;
+        std::cerr << "[+]Error wrong adrress" <<std::endl;
         close(socket_fd);
         return 1;
     }
 
     if (connect(socket_fd, (struct sockaddr*) &server_addr, sizeof(server_addr)) <0)
     {
-        std::cerr << "error connecting..." <<std::endl;
+        std::cerr << "[+]Error connecting..." <<std::endl;
         close(socket_fd);
         return 1;
     }
@@ -49,10 +50,14 @@ int main(int argc, char* argv[]){
     int bytes_sent = send(socket_fd, file_content.c_str(), file_content.length(), 0);
     if(bytes_sent < 0)
     {
-        std::cerr << "error sending data to server" <<std::endl;
+        std::cerr << "[+]Error sending data to server" <<std::endl;
         close(socket_fd);
         return 1;
 
+    }
+    else
+    {
+        std::cerr << "[+]Data sent" << std::endl;
     }
 
     close(socket_fd);
